@@ -3,14 +3,16 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 
-def get_pos_tags(filename, fileplace='Unit9/Datasets'):
-    # ファイル名が.txtで終わることを確認
-    if not filename.endswith(".txt"):
-        filename += ".txt"
+def get_pos_tags(partial_filename, fileplace='Unit9/Datasets'):
 
     # ファイルが存在することを確認
-    if not os.path.exists(os.path.join(fileplace, filename)):
-        raise FileNotFoundError(f"No such file or directory: '{filename}'")
+    matching_files = [filename for filename in os.listdir(fileplace) if partial_filename in filename]
+    if len(matching_files) > 1:
+        raise ValueError("Error: Please specify the file more clearly.")
+    elif not matching_files:
+        raise FileNotFoundError(f"No such file or directory: '{partial_filename}'")
+
+    filename = matching_files[0]
 
     with open(os.path.join(fileplace, filename), 'r') as file:
         text = file.read()
@@ -21,7 +23,6 @@ def get_pos_tags(filename, fileplace='Unit9/Datasets'):
     # 各単語に品詞タグを付ける
     tagged_words = pos_tag(words)
 
-    fileplace = 'Unit9/Datasets'
     new_fileplace = 'Unit9/POS_Datasets'
 
     # 新しいディレクトリが存在しない場合、作成する
