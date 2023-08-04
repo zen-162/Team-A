@@ -4,11 +4,57 @@
 # suggest ruling out the least similiar dataset
 
 import nltk
-tag_list = tuple(["$", "''", "(", ")", ",", "--", ".", ":", "CC", "CD", "DT", 
-                 "EX", "FW", "IN", "JJ", "JJR", "JJS", "LS", "MD", "NN", "NNP", 
-                 "NNPS", "NNS", "PDT", "POS", "PRP", "PRP$", "RB", "RBR", "RBS", 
-                 "RP", "SYM", "TO", "UH", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ",
-                 "WDT", "WP", "WP$", "WRB", "``"])
+
+# nltkの全タグ
+tag_list = tuple(
+    [
+        "$",
+        "''",
+        "(",
+        ")",
+        ",",
+        "--",
+        ".",
+        ":",
+        "CC",
+        "CD",
+        "DT",
+        "EX",
+        "FW",
+        "IN",
+        "JJ",
+        "JJR",
+        "JJS",
+        "LS",
+        "MD",
+        "NN",
+        "NNP",
+        "NNPS",
+        "NNS",
+        "PDT",
+        "POS",
+        "PRP",
+        "PRP$",
+        "RB",
+        "RBR",
+        "RBS",
+        "RP",
+        "SYM",
+        "TO",
+        "UH",
+        "VB",
+        "VBD",
+        "VBG",
+        "VBN",
+        "VBP",
+        "VBZ",
+        "WDT",
+        "WP",
+        "WP$",
+        "WRB",
+        "``",
+    ]
+)
 # following will be overwritten when tagging is completed
 sentence = """At eight o'clock on Thursday morning 
             Arthur didn't feel very good."""
@@ -21,11 +67,15 @@ tagged_1 = nltk.pos_tag(tokens)
 tagged_2 = nltk.pos_tag(tokens_2)
 tagged_q = nltk.pos_tag(tokens)
 
+
+# POSタグとその数を名前付きで保存
 class Dataset:
     def __init__(self, name, pn_dict):
         self.name = name
         self.pn_dict = pn_dict
 
+
+# それぞれのPOSタグ数をカウント
 def count_pos(tagged: list):
     pn_dict = {}
     for tp in tagged:
@@ -36,14 +86,7 @@ def count_pos(tagged: list):
     return pn_dict
 
 
-pn_dict_1 = count_pos(tagged_1)
-pn_dict_2 = count_pos(tagged_2)
-pn_dict_q = count_pos(tagged_q)
-
-ds1 = Dataset("K1", pn_dict_1)
-ds2 = Dataset("K2", pn_dict_2)
-dsq = Dataset("Q", pn_dict_q)
-
+# 2つのデータの(タグ数/総トークン数)を比較
 def compare_pos(pn1: dict, tn1: int, pn2: dict, tn2: int):
     dev = 0
     for tag in tag_list:
@@ -60,7 +103,9 @@ def compare_pos(pn1: dict, tn1: int, pn2: dict, tn2: int):
             dev += pdev
     return dev
 
+
 # kwargs == ds1:Dataset, ds2:Dataset,...
+# 対象と既存データセットを比較、類似度が最も低いデータ名とズレの値を返す
 def find_unlikely(pnq: dict, tnq: int, **kwargs):
     max_dev = 0
     unl_dict = None
@@ -72,6 +117,17 @@ def find_unlikely(pnq: dict, tnq: int, **kwargs):
         if dev > max_dev:
             max_dev = dev
             unl_dict = ds.name
-    print(unl_dict)
+    return max_dev, unl_dict
 
-find_unlikely(pn_dict_q, len(tokens), ds1=ds1, ds2=ds2)
+
+# 以上を実行する
+# 対象と既知データのファイル名を受け取って実行するように修正予定
+def count():
+    pn_dict_1 = count_pos(tagged_1)
+    pn_dict_2 = count_pos(tagged_2)
+    pn_dict_q = count_pos(tagged_q)
+
+    ds1 = Dataset("K1", pn_dict_1)
+    ds2 = Dataset("K2", pn_dict_2)
+
+    return find_unlikely(pn_dict_q, len(tokens), ds1=ds1, ds2=ds2)
