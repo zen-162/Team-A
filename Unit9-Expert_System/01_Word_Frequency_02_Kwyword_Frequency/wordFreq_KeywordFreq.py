@@ -26,20 +26,34 @@ def count_word_frequency(text):
 
 # ２つの辞書型変数のkey(word)が共通しているものから n 個をDict型として出力する
 ## (Output n dict types from two dictionary type variables with key(word) in coommon)
-def CreateDict_SharedWords(dict1, dict2, n=100):
-    common_keys_dict = {key: dict1[key] for key in dict1.keys() if key in dict2}
+def CreateDict_SharedWords(dict1, dict2, n=1000):
 
-    return common_keys_dict # n まで
+    # n が辞書の大きさを超えているとき
+    dict_size = min(len(dict1), len(dict2))
+    if  dict_size < n:
+        n = dict_size
+
+    # n まで
+    list1 = list(dict1)
+    list2 = list(dict2)
+    dict1_n = {key: dict1[key] for key in list1[:n]}
+    dict2_n = {key: dict2[key] for key in list2[:n]}
+
+    # word(key)が共通しているもの、出現頻度(value)は小さい方を用いる
+    common_keys = set(dict1_n.keys()) & set(dict2_n.keys())
+    common_keys_dict = {key: min(dict1_n[key], dict2_n[key]) for key in common_keys}
+
+    return common_keys_dict
 
 # 共通している Word Frequencies のリストを出力
 def wordFreq(S_dict):
 
     # word frequenciesの候補（candidate of word frequencies）
-    L_wf = ['a', 'an', 'the', 'I', 'you', 'he', 'she', 'my', 'me', 'mine', 'your', 'yours', 'his', 'him', 'her', 'hers', 'it', 'its', 'we', 'our', 'us', 'ours', 'they', 'their', 'them', 'theirs', 'this', 'that', 'there',
-            'and', 'or', 'if', 'because', 'as', 'such', 'from', 'also', 'one', 'thus', 'into', 'whole', 'but', 'nor', 'yet', 'so', 'although', 'even', 'though', 'since', 'unless' 'until', 'whenever', 'wherever' 'whereas', 'while', 'both', 'either', 'neither', 'not', 'no', 'any', 'only' , 'very', 'too', 'some', 'rather' 'than', 'better', 'best', 'whether',
-            'of', 'on', 'in', 'off', 'up', 'down', 'to', 'for', 'at', 'with', 'by', 'before' 'after', 'about', 'near', 'until', 'out',
-            'be', 'is', 'are', 'was', 'were', 'would', 'where', 'which', 'what', 'why', 'how', 'who', 'whoes',
-            'do', 'did', 'does', 'can', 'will', 'should', 'may', 'could']
+    L_wf = ['a', 'an', 'the', 'I', 'you', 'he', 'she', 'my', 'me', 'mine', 'your', 'yours', 'his', 'him', 'her', 'hers', 'it', 'its', 'we', 'our', 'us', 'ours', 'they', 'their', 'them', 'theirs', 'this', 'that', 'there', 'other', 'others', 'another', 'another',
+            'and', 'or', 'if', 'because', 'as', 'such', 'from', 'also', 'one', 'thus', 'into', 'whole', 'but', 'nor', 'yet', 'so', 'although', 'even', 'though', 'since', 'unless' 'until', 'whenever', 'wherever', 'whereas', 'while', 'both', 'either', 'neither', 'not', 'no', 'any', 'only' , 'very', 'too', 'some', 'many', 'lot', 'lots', 'all', 'rather', 'than', 'better', 'best', 'whether',
+            'of', 'on', 'in', 'off', 'up', 'down', 'to', 'for', 'at', 'under', 'over', 'with', 'by', 'before', 'after', 'about', 'near', 'until', 'out',
+            'which', 'what', 'why', 'when', 'how', 'who', 'whoes',
+            'do', 'did', 'does', 'can', 'will', 'should', 'may', 'could', 'would', 'be', 'is', 'are', 'was', 'were', 'being']
 
     S_wf = {key: S_dict[key] for key in L_wf if key in S_dict} # dataset中の共通しているwordFrequencies
 
